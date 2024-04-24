@@ -4,7 +4,13 @@ class Grid {
     constructor(width, height) {
         this.width = width;
         this.height = height;
-        this.cells = range(height).map(y => range(width).map(x => ({ x, y, data: null })));
+        this.cells = range(height).map(y => range(width).map(x => ({
+            x,
+            y,
+            data: null,
+            nextData: null,
+            over: (dx, dy) => this.getCell(x + dx, y + dy)
+        })));
         this.endMode = "wrap"; // stop, clamp, wrap
     }
 
@@ -41,4 +47,15 @@ class Grid {
         }
         this.cells[y][x] = value;
     }
+
+    update(func) {
+        this.cells.forEach(row => row.forEach(cell => {
+            cell.nextData = func(cell);
+        }));
+        this.cells.forEach(row => row.forEach(cell => {
+            cell.data = cell.nextData;
+        }));
+    }
 }
+
+export default Grid;
