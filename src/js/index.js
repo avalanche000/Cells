@@ -1,35 +1,37 @@
 import Grid from "./Grid.js";
 import { query } from "./utils.js";
 
-const grid = new Grid(query("#gridContainer"), 20, 15);
+const grid = new Grid(query("#gridContainer"), 20, 15, "stop");
 
 let running = true;
 
 grid.setAll(0);
 
 grid.setDraw(cell => {
-    const gray = 255 - cell.data * 3;
-
-    cell.element.style.backgroundColor = `rgb(${gray}, ${gray}, ${gray})`;
-    cell.element.style.borderWidth = `${cell.data / 255 * 20 + 1}px`;
+    // 0: empty, 1: dirt, 2: water, 3: wood, 4: fire
+    cell.element.style.backgroundColor = ["white", "brown", "blue", "darkbrown", "orange"][cell.data];
 });
 
 grid.setUpdate(cell => {
-    let count = 0;
-    let total = 0.1;
-
-    [[-1, -1], [0, -1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0]].forEach(pos => {
-        count += cell.over(...pos).data ** 3;
-        total += cell.over(...pos).data ** 2;
-    });
-
-    const average = count / total;
-
-    return (average + cell.data) / 2.1;
+    switch (cell.data) {
+        case 0:
+            break;
+        case 1:
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        case 4:
+            break;
+        default:
+            return 0;
+    }
 });
 
 grid.setOnClick(cell => {
-    cell.data = 255;
+    cell.data += 1;
+    cell.data %= 5;
 
     grid.draw();
 });

@@ -73,7 +73,7 @@ function nestedCounter(...args) {
 
     for (let i = 0; i < length; i++) {
         const counters = [];
-        
+
         let number = i;
 
         for (let j = args.length - 1; j >= 0; j--) {
@@ -90,8 +90,21 @@ function nestedCounter(...args) {
     return array;
 }
 
+function offsetSquare(size) {
+    return nestedCounter(size * 2 - 1, size * 2 - 1).map(pos => [pos[0] - size + 1, pos[1] - size + 1]);
+}
+
+function offsetRing(size) {
+    if (size < 1) return [];
+    if (size === 1) return [[0, 0]];
+
+    const inner = offsetSquare(size - 1).map(pos => JSON.stringify(pos));
+
+    return offsetSquare(size).filter(pos => !inner.includes(JSON.stringify(pos)));
+}
+
 function query(selector) {
     return document.querySelector(selector);
 }
 
-export { wrap, clamp, arrayOf, range, JSONCopy, nestedCounter, query };
+export { wrap, clamp, arrayOf, range, JSONCopy, nestedCounter, offsetSquare, offsetRing, query };

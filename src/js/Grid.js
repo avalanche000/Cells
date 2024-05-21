@@ -1,7 +1,7 @@
-import { clamp, range, wrap } from "./utils.js";
+import { clamp, offsetRing, range, wrap } from "./utils.js";
 
 class Grid {
-    constructor(element, width, height) {
+    constructor(element, width, height, endMode = "wrap") {
         this.element = element;
         this.width = width;
         this.height = height;
@@ -11,9 +11,18 @@ class Grid {
             data: null,
             nextData: null,
             element: null,
-            over: (dx, dy) => this.getCell(x + dx, y + dy)
+            over: (dx, dy) => this.getCell(x + dx, y + dy),
+            ring: (size) => offsetRing(size).map(offset => this.getCell(x + offset[0], y + offset[0])),
+            top: () => this.getCell(x, y - 1),
+            topleft: () => this.getCell(x - 1, y - 1),
+            left: () => this.getCell(x - 1, y),
+            bottomleft: () => this.getCell(x - 1, y + 1),
+            bottom: () => this.getCell(x, y + 1),
+            bottomright: () => this.getCell(x + 1, y + 1),
+            right: () => this.getCell(x + 1, y),
+            topright: () => this.getCell(x + 1, y - 1),
         })));
-        this.endMode = "wrap"; // stop, clamp, wrap
+        this.endMode = endMode; // stop, clamp, wrap
         this.updateFunc = null;
         this.drawFunc = null;
 
@@ -29,7 +38,7 @@ class Grid {
             range(this.width).forEach(x => {
                 const col = document.createElement("div");
                 const cell = document.createElement("div");
-    
+
                 col.classList.add("col");
                 cell.classList.add("cell");
 
@@ -98,7 +107,7 @@ class Grid {
     update(func) {
         func = func ?? this.updateFunc;
         this.cells.forEach(row => row.forEach(cell => {
-            cell.nextData = func(cell);
+            cell.nextData = func(cell) ?? cell.data;
         }));
         this.cells.forEach(row => row.forEach(cell => {
             cell.data = cell.nextData;
