@@ -12,7 +12,7 @@ class Grid {
             nextData: null,
             element: null,
             over: (dx, dy) => this.getCell(x + dx, y + dy),
-            ring: (size) => offsetRing(size).map(offset => this.getCell(x + offset[0], y + offset[0])),
+            ring: (size) => offsetRing(size).map(offset => this.getCell(x + offset[0], y + offset[1])),
             top: () => this.getCell(x, y - 1),
             topleft: () => this.getCell(x - 1, y - 1),
             left: () => this.getCell(x - 1, y),
@@ -101,7 +101,7 @@ class Grid {
     }
 
     setOnClick(func) {
-        this.cells.forEach(row => row.forEach(cell => cell.element.addEventListener("click", () => func(cell))));
+        this.cells.forEach(row => row.forEach(cell => cell.element.addEventListener("click", event => func(cell, event))));
     }
 
     update(func) {
