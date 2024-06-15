@@ -1,19 +1,28 @@
 import Grid from "./Grid.js";
 import { query } from "./utils.js";
 
-const grid = new Grid(query("#gridContainer"), 50, 50, "stop");
-
-let running = true;
-let state = 0;
-
-grid.setAll(3);
-
-grid.setDraw(cell => {
-    // 0: empty, 1: dirt, 2: water, 3: flammable, 4: fire
-    cell.element.style.backgroundColor = ["white", "#402d0b", "#1551d1", "#16a119", "#ed601a"][cell.data];
+const grid = new Grid(query("#gridContainer"), 11, 11, {
+    endMode: "stop",
+    defaultData: {
+        top: true,
+        bottom: true,
+        left: true,
+        right: true,
+        visited: false,
+        active: false,
+        entry: null, // (top | bottom | left | right)
+    },
 });
 
-grid.setUpdate(cell => {
+grid.drawFunc = (cell) => {
+    // 0: empty, 1: dirt, 2: water, 3: flammable, 4: fire
+    cell.element.style = {
+        ...cell.element.style,
+        "border-top": "1px solid black",
+    };
+};
+
+grid.updateFunc = (cell) => {
     switch (cell.data) {
         case 0:
             break;
@@ -50,7 +59,7 @@ grid.setUpdate(cell => {
         default:
             return 0;
     }
-});
+};
 
 grid.setOnClick((cell, event) => {
     if (event.button === 0) {
@@ -62,23 +71,9 @@ grid.setOnClick((cell, event) => {
 
 grid.draw();
 
-window.addEventListener("keydown", event => {
-    if (event.code === "Space") running = !running;
-});
-
-window.addEventListener("contextmenu", event => {
-    if (event.button === 2) {
-        state = (state + 1) % 5;
-    }
-    event.preventDefault();
-    event.stopPropagation();
-});
-
 function loop() {
-    if (running) {
-        grid.update();
-        grid.draw();
-    }
+    grid.update();
+    grid.draw();
 
     requestAnimationFrame(loop);
 }

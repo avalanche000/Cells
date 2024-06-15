@@ -1,4 +1,10 @@
-// wraps x between [min, max)
+/**
+ * Wraps a value between a min and max where any out-of-bounds number will be added or subtracted by the range until it falls within the boundary [min, max)
+ * @param {float} min - the minimum value of the wrap range, the return value can equal this number
+ * @param {float} max - the maximum vlaue of the wrap range, the return value may not equal this number
+ * @param {float} x - the number to wrap
+ * @returns {float} the wrapped number on the range [min, max)
+ */
 function wrap(min, max, x) {
     const wrapRange = max - min;
 
@@ -8,7 +14,13 @@ function wrap(min, max, x) {
     return x;
 }
 
-// clamps x between [min, max]
+/**
+ * Clamps a value between a min and max where any out-of-bounds number will become either the min or the max depending on which direction it has left the range [min, max]
+ * @param {float} min - the minimum value of the clamp range, the return value can equal this number
+ * @param {float} max - the maximum vlaue of the clamp range, the return value can equal this number
+ * @param {float} x - the number to clamp
+ * @returns {float} the clamped number on the range [min, max]
+ */
 function clamp(min, max, x) {
     if (x > max) return max;
     if (x < min) return min;
@@ -21,6 +33,11 @@ function arrayOf(length, value) {
 }
 
 // returns an array of integers on [min, max) or [0, max)
+/**
+ * Returns an ordered array of increasing consecutive integers
+ * @param {...int} args - Can either be a single integer which returns the array of [0, args[0]) or it can be two integers that returns the array of [args[0], args[1])
+ * @returns {int[]} the array of integers
+ */
 function range(...args) {
     let min = 0;
     let max;
@@ -103,8 +120,17 @@ function offsetRing(size) {
     return offsetSquare(size).filter(pos => !inner.includes(JSON.stringify(pos)));
 }
 
+function createOffsetObject(offsetList) {
+    const obj = {
+        offsetList,
+        shift: (dx, dy) => obj.offsetList = obj.offsetList.map(pos => [pos[0] + dx, pos[1] + dy]),
+    };
+
+    return obj;
+}
+
 function query(selector) {
     return document.querySelector(selector);
 }
 
-export { wrap, clamp, arrayOf, range, JSONCopy, nestedCounter, offsetSquare, offsetRing, query };
+export { wrap, clamp, arrayOf, range, JSONCopy, nestedCounter, offsetSquare, offsetRing, createOffsetObject, query };

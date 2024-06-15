@@ -1,14 +1,14 @@
 import { clamp, offsetRing, range, wrap } from "./utils.js";
 
 class Grid {
-    constructor(element, width, height, endMode = "wrap") {
+    constructor(element, width, height, options = { endMode: "wrap", defaultData: null }) {
         this.element = element;
         this.width = width;
         this.height = height;
         this.cells = range(this.height).map(y => range(this.width).map(x => ({
             x,
             y,
-            data: null,
+            data: options.defaultData,
             nextData: null,
             element: null,
             over: (dx, dy) => this.getCell(x + dx, y + dy),
@@ -22,7 +22,7 @@ class Grid {
             right: () => this.getCell(x + 1, y),
             topright: () => this.getCell(x + 1, y - 1),
         })));
-        this.endMode = endMode; // stop, clamp, wrap
+        this.endMode = options.endMode; // stop, clamp, wrap
         this.updateFunc = null;
         this.drawFunc = null;
 
@@ -86,18 +86,8 @@ class Grid {
         this.cells[y][x].data = data;
     }
 
-    setAll(data) {
-        this.cells.forEach(row => row.forEach(cell => {
-            cell.data = data;
-        }));
-    }
-
-    setUpdate(func) {
-        this.updateFunc = func;
-    }
-
-    setDraw(func) {
-        this.drawFunc = func;
+    setAll(func) {
+        this.cells.forEach(row => row.forEach(cell => func(cell)));
     }
 
     setOnClick(func) {
